@@ -6,6 +6,9 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
 import RegisterVehicle from "./pages/Register/RegisterVehicle";
 import UserProfile from "./pages/Profile/UserProfile";
+import SearchResults from "./pages/Search/SearchResults";
+import RideDetails from "./pages/RideDetails/RideDetails";
+import Booking from "./pages/Booking/Booking";
 function App() {
   return (
     <AuthProvider>
@@ -15,7 +18,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          {/* <Route path="/search" element={<RideSearch />} /> */}
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/ride-details" element={<RideDetails />} />
+          <Route path="/booking" element={<Booking />} />
           {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
           {/* New Vehicle Registration Route */}
           <Route path="/register-vehicle" element={<RegisterVehicle />} />
