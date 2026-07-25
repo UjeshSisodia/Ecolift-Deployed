@@ -1,6 +1,7 @@
 package com.ecolift.service.impl;
 
 import com.ecolift.entity.User;
+import com.ecolift.entity.UserMode;
 import com.ecolift.exception.ResourceNotFoundException;
 import com.ecolift.exception.DuplicateResourceException;
 import com.ecolift.repository.UserRepository;
@@ -129,6 +130,21 @@ public class UserServiceImpl implements UserService {
         User user = findById(passengerId);
         validateHasRole(user, "PASSENGER");
         return user;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User getCurrentUserMode(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+    }
+
+    @Override
+    public User updateCurrentMode(String email, UserMode mode) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+        user.setCurrentMode(mode);
+        return userRepository.save(user);
     }
 
     private void validateHasRole(User user, String roleName) {

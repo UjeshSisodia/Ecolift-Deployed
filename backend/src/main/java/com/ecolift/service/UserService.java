@@ -19,4 +19,6 @@ public interface UserService {
     void activateUser(Long userId);
     User getDriverProfile(Long driverId);
     User getPassengerProfile(Long passengerId);
+    User getCurrentUserMode(String email);
+    User updateCurrentMode(String email, com.ecolift.entity.UserMode mode);
 }

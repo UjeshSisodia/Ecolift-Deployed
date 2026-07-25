@@ -50,14 +50,8 @@ const Register = () => {
       const data = await response.json();
 
       if (data.token) {
-        // 2. Destructure the values out of 'data' so they are defined
         const { token, email, name, roles } = data;
-
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(data));
-
-        // 3. Now this login function is defined and has the correct variables
-        login(token, { email, name, roles });
+        login({ email, name, roles }, token);
       }
 
       navigate("/");
