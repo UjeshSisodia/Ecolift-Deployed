@@ -4,13 +4,13 @@ import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, currentMode, updateCurrentMode } = useAuth();
   const location = useLocation();
 
   // States
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModeMenuOpen, setIsModeMenuOpen] = useState(false); // Controls the sub-dropdown
-  const [userMode, setUserMode] = useState("passenger"); // Tracks active mode
+  const [userMode, setUserMode] = useState(currentMode?.toLowerCase() || "passenger"); // Tracks active mode
 
   const dropdownRef = useRef(null);
 
@@ -37,10 +37,20 @@ const Navbar = () => {
     navigate("/");
   };
 
-  const handleModeChange = (mode) => {
+  const handleModeChange = async (mode) => {
+    const normalizedMode = mode.toUpperCase();
     setUserMode(mode);
+    try {
+      await updateCurrentMode(normalizedMode);
+    } catch (error) {
+      setUserMode(currentMode?.toLowerCase() || "passenger");
+    }
     setIsModeMenuOpen(false); // Auto-close sub-dropdown on selection
   };
+
+  useEffect(() => {
+    setUserMode((currentMode || "PASSENGER").toLowerCase());
+  }, [currentMode]);
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow-sm h-20 transition-all duration-300">
@@ -107,6 +117,28 @@ const Navbar = () => {
                 <span className="text-sm font-medium text-green-700">
                   1,240 kg saved
                 </span>
+              </div>
+
+              <div className="hidden md:flex items-center gap-2">
+                {currentMode === "DRIVER" ? (
+                  <>
+                    <a href="#" className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
+                      Driver Hub
+                    </a>
+                    <a href="#" className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
+                      Publish Ride
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    <a href="#" className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
+                      Find Ride
+                    </a>
+                    <a href="#" className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
+                      My Bookings
+                    </a>
+                  </>
+                )}
               </div>
 
               {/* Profile Avatar Button */}
