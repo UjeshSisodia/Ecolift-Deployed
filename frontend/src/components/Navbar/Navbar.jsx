@@ -10,7 +10,9 @@ const Navbar = () => {
   // States
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModeMenuOpen, setIsModeMenuOpen] = useState(false); // Controls the sub-dropdown
-  const [userMode, setUserMode] = useState(currentMode?.toLowerCase() || "passenger"); // Tracks active mode
+  const [userMode, setUserMode] = useState(
+    currentMode?.toLowerCase() || "passenger",
+  ); // Tracks active mode
 
   const dropdownRef = useRef(null);
 
@@ -122,19 +124,19 @@ const Navbar = () => {
               <div className="hidden md:flex items-center gap-2">
                 {currentMode === "DRIVER" ? (
                   <>
-                    <a href="#" className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
+                    <a
+                      href="#"
+                      className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50"
+                    >
                       Driver Hub
-                    </a>
-                    <a href="#" className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
-                      Publish Ride
                     </a>
                   </>
                 ) : (
                   <>
-                    <a href="#" className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
-                      Find Ride
-                    </a>
-                    <a href="#" className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
+                    <a
+                      href="#"
+                      className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50"
+                    >
                       My Bookings
                     </a>
                   </>

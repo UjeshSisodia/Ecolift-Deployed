@@ -1,97 +1,106 @@
 import React, { useState } from "react";
-import { MapPin, Calendar, Users, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { MapPin, CalendarDays, Users, Search } from "lucide-react";
 
 const PassengerView = () => {
-  const [searchParams, setSearchParams] = useState({
-    source: "",
-    destination: "",
+  const navigate = useNavigate();
+  const [searchData, setSearchData] = useState({
+    from: "",
+    to: "",
     date: "",
-    passengers: 1,
+    passengers: "1",
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setSearchParams((prev) => ({ ...prev, [name]: value }));
+    setSearchData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    console.log("Searching rides with parameters:", searchParams);
-    // Integration logic for GET /api/v1/rides/search will go here
+
+    const { from, to, date, passengers } = searchData;
+
+    if (!from || !to || !date) {
+      return;
+    }
+
+    navigate(
+      `/search?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${encodeURIComponent(date)}&seats=${encodeURIComponent(passengers)}`,
+    );
   };
 
   return (
-    <div className="w-full">
-      <form
-        onSubmit={handleSearch}
-        className="flex flex-col gap-4 md:flex-row md:items-center md:gap-3"
-      >
-        {/* Source Input */}
-        <div className="flex flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 transition focus-within:border-emerald-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-100">
-          <MapPin className="h-5 w-5 text-emerald-600 shrink-0" />
-          <input
-            type="text"
-            name="source"
-            value={searchParams.source}
-            onChange={handleChange}
-            placeholder="Leaving from..."
-            required
-            className="w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
-          />
-        </div>
+    <div className="bg-white rounded-2xl shadow-2xl p-6">
+      <form onSubmit={handleSearch} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="relative">
+            <MapPin className="absolute left-3 top-3 text-gray-500" size={20} />
 
-        {/* Destination Input */}
-        <div className="flex flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 transition focus-within:border-emerald-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-100">
-          <MapPin className="h-5 w-5 text-emerald-600 shrink-0" />
-          <input
-            type="text"
-            name="destination"
-            value={searchParams.destination}
-            onChange={handleChange}
-            placeholder="Going to..."
-            required
-            className="w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
-          />
-        </div>
+            <input
+              type="text"
+              name="from"
+              value={searchData.from}
+              onChange={handleChange}
+              placeholder="From"
+              className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-600 outline-none"
+            />
+          </div>
 
-        {/* Date Input */}
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 transition focus-within:border-emerald-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-100">
-          <Calendar className="h-5 w-5 text-emerald-600 shrink-0" />
-          <input
-            type="date"
-            name="date"
-            value={searchParams.date}
-            onChange={handleChange}
-            required
-            className="bg-transparent text-sm text-slate-800 outline-none"
-          />
-        </div>
+          <div className="relative">
+            <MapPin className="absolute left-3 top-3 text-gray-500" size={20} />
 
-        {/* Passengers Dropdown */}
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 transition focus-within:border-emerald-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-100">
-          <Users className="h-5 w-5 text-emerald-600 shrink-0" />
-          <select
-            name="passengers"
-            value={searchParams.passengers}
-            onChange={handleChange}
-            className="bg-transparent text-sm text-slate-800 outline-none"
+            <input
+              type="text"
+              name="to"
+              value={searchData.to}
+              onChange={handleChange}
+              placeholder="To"
+              className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-600 outline-none"
+            />
+          </div>
+
+          <div className="relative">
+            <CalendarDays
+              className="absolute left-3 top-3 text-gray-500"
+              size={20}
+            />
+
+            <input
+              type="date"
+              name="date"
+              value={searchData.date}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-600 outline-none"
+            />
+          </div>
+
+          <div className="relative">
+            <Users className="absolute left-3 top-3 text-gray-500" size={20} />
+
+            <select
+              name="passengers"
+              value={searchData.passengers}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-600 outline-none"
+            >
+              <option value="1">1 Passenger</option>
+              <option value="2">2 Passengers</option>
+              <option value="3">3 Passengers</option>
+              <option value="4">4+ Passengers</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="bg-green-700 hover:bg-green-800 text-white rounded-lg flex items-center justify-center gap-2 px-6 py-3 transition duration-300"
           >
-            {[1, 2, 3, 4, 5, 6].map((num) => (
-              <option key={num} value={num}>
-                {num} {num === 1 ? "Passenger" : "Passengers"}
-              </option>
-            ))}
-          </select>
+            <Search size={20} />
+            Search
+          </button>
         </div>
-
-        {/* Search Button */}
-        <button
-          type="submit"
-          className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-emerald-700 active:scale-[0.98]"
-        >
-          <Search className="h-4 w-4" />
-          <span>Search Rides</span>
-        </button>
       </form>
     </div>
   );

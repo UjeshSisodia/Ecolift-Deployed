@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import api from "../api/axiosConfig";
+import EcoLoader from "../components/Loader/EcoLoader";
 
 const AuthContext = createContext(null);
 
@@ -67,16 +68,27 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
     setCurrentMode("PASSENGER");
-    window.location.href = "/login"; 
+    window.location.href = "/login";
   };
 
   // ✅ Fix: Use the reactive 'token' state here
   const isAuthenticated = !!token;
 
-  if (loading) return <div>Loading...</div>; // Prevent flickering on refresh
+  if (loading) return <EcoLoader />; // Prevent flickering on refresh
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated, currentMode, login, logout, updateCurrentMode, loadCurrentMode }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        isAuthenticated,
+        currentMode,
+        login,
+        logout,
+        updateCurrentMode,
+        loadCurrentMode,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
