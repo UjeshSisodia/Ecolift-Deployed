@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout, currentMode, updateCurrentMode } = useAuth();
+  const { isAuthenticated, logout, currentMode, updateCurrentMode, user } = useAuth();
   const location = useLocation();
 
   // States
@@ -145,6 +145,14 @@ const Navbar = () => {
                     >
                       My Bookings
                     </a>
+                    {!user?.roles?.includes("DRIVER") && (
+                      <Link
+                        to="/register-vehicle"
+                        className="rounded-full bg-green-700 px-3 py-2 text-sm font-medium text-white hover:bg-green-800"
+                      >
+                        Become a Driver
+                      </Link>
+                    )}
                   </>
                 )}
               </div>

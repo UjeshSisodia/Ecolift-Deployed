@@ -16,6 +16,7 @@ import {
 import api from "../../api/axiosConfig";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
+import { useAuth } from "../../context/AuthContext";
 
 const inputClasses =
   "w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100";
@@ -39,6 +40,7 @@ const Field = ({ icon: Icon, label, children }) => (
 const RegisterVehicle = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { refreshAuth } = useAuth();
 
   const [formData, setFormData] = useState({
     vehicleName: "",
@@ -87,6 +89,16 @@ const RegisterVehicle = () => {
       });
 
       setSuccess(true);
+
+      // Registering a vehicle grants the DRIVER role on the backend. Refresh
+      // the token/roles now so the app immediately recognizes the user as a
+      // driver, instead of requiring a logout/login to pick up the change.
+      try {
+        await refreshAuth();
+      } catch (refreshErr) {
+        // Non-fatal: the vehicle was still registered successfully. Worst case
+        // the user may need to log back in to access driver-only pages.
+      }
 
       // If the driver arrived here mid-way through publishing a ride, send them
       // back to that flow; otherwise go to their profile.

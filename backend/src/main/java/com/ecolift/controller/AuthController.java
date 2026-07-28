@@ -29,4 +29,17 @@ public class AuthController {
         AuthResponse response = authService.authenticate(request);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Re-issues a fresh JWT (with up-to-date roles) for the currently logged-in user.
+     * Call this after any action that can change a user's roles mid-session
+     * (e.g. registering a vehicle grants the DRIVER role) so the frontend doesn't
+     * need to force a logout/login to pick up the new permissions.
+     */
+    @GetMapping("/refresh")
+    @org.springframework.security.access.prepost.PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AuthResponse> refresh(org.springframework.security.core.Authentication authentication) {
+        AuthResponse response = authService.refreshToken(authentication.getName());
+        return ResponseEntity.ok(response);
+    }
 }

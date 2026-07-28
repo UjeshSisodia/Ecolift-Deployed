@@ -50,9 +50,30 @@ export const AuthProvider = ({ children }) => {
   const updateCurrentMode = async (mode) => {
     try {
       const response = await api.put("/users/current-mode", { mode });
-      if (response?.data?.mode) {
-        setCurrentMode(response.data.mode);
-        return response.data.mode;
+      const { mode: newMode, token: newToken, roles } = response.data;
+
+      // Switching modes can grant a new role on the backend (see
+      // UserServiceImpl.updateCurrentMode), so the response includes a fresh
+      // token + role list. Sync them immediately so the rest of the app
+      // (route guards, nav links) reflects the change without a re-login.
+      if (newToken) {
+        localStorage.setItem("jwt_token", newToken);
+        localStorage.setItem("token", newToken);
+        setToken(newToken);
+      }
+
+      if (roles) {
+        setUser((prev) => {
+          const updated = { ...(prev || {}), roles };
+          localStorage.setItem("user_data", JSON.stringify(updated));
+          localStorage.setItem("user", JSON.stringify(updated));
+          return updated;
+        });
+      }
+
+      if (newMode) {
+        setCurrentMode(newMode);
+        return newMode;
       }
       return currentMode;
     } catch (error) {
@@ -71,6 +92,30 @@ export const AuthProvider = ({ children }) => {
     window.location.href = "/login";
   };
 
+  // Re-issues a fresh token + roles for the current user. Call this after any
+  // action that can change roles mid-session (e.g. registering a vehicle grants
+  // the DRIVER role) so the app doesn't require a logout/login to pick it up.
+  const refreshAuth = async () => {
+    try {
+      const response = await api.get("/auth/refresh");
+      const { token: newToken, email, name, roles } = response.data;
+      const userData = { email, name, roles };
+
+      localStorage.setItem("jwt_token", newToken);
+      localStorage.setItem("user_data", JSON.stringify(userData));
+      localStorage.setItem("token", newToken);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      setToken(newToken);
+      setUser(userData);
+      await loadCurrentMode(newToken);
+
+      return userData;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   // ✅ Fix: Use the reactive 'token' state here
   const isAuthenticated = !!token;
 
@@ -87,6 +132,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         updateCurrentMode,
         loadCurrentMode,
+        refreshAuth,
       }}
     >
       {children}

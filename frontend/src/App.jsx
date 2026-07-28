@@ -11,6 +11,7 @@ import RideDetails from "./pages/RideDetails/RideDetails";
 import Booking from "./pages/Booking/Booking";
 import DriverRides from "./pages/DriverRides/DriverRides";
 import MyVehicles from "./pages/MyVehicles/MyVehicles";
+import Unauthorized from "./pages/Unauthorized/Unauthorized";
 function App() {
   return (
     <AuthProvider>
@@ -23,7 +24,7 @@ function App() {
           <Route path="/search" element={<SearchResults />} />
           <Route path="/ride-details" element={<RideDetails />} />
           <Route path="/booking" element={<Booking />} />
-          {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
+          <Route path="/unauthorized" element={<Unauthorized />} />
           {/* New Vehicle Registration Route */}
           <Route path="/register-vehicle" element={<RegisterVehicle />} />
 

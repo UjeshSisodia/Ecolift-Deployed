@@ -143,6 +143,18 @@ public class UserServiceImpl implements UserService {
     public User updateCurrentMode(String email, UserMode mode) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+
+        // Switching modes is a statement of intent to act in that capacity, so
+        // self-grant the matching role if the user doesn't already have it —
+        // mirroring how registering a vehicle already auto-grants DRIVER.
+        // This keeps Driver <-> Passenger switching symmetric for every account,
+        // regardless of which role was chosen at signup.
+        boolean hasRequiredRole = user.getRoles().stream()
+                .anyMatch(role -> role.getName().equalsIgnoreCase(mode.name()));
+        if (!hasRequiredRole) {
+            roleService.assignRoleToUser(user, mode.name());
+        }
+
         user.setCurrentMode(mode);
         return userRepository.save(user);
     }
