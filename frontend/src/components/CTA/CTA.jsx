@@ -26,6 +26,7 @@ const CTA = () => {
           <button className="bg-white text-green-700 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition flex items-center justify-center gap-2">
             Get Started Free
             <ArrowRight size={18} />
+            
           </button>
 
           <button className="bg-green-800 border border-green-300 px-8 py-4 rounded-full font-semibold hover:bg-green-900 transition">

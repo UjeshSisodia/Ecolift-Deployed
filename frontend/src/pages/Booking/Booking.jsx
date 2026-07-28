@@ -6,6 +6,7 @@ const Booking = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const ride = location.state?.ride;
+  
 
   if (!ride) {
     return (

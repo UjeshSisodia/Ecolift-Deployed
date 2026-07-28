@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 // Shared Components
 import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Footer from "../../components/Footer/Footer";
 
 const UserProfile = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("passenger");
 
+  const displayName = user?.name || "User";
+  const displayEmail = user?.email || "user@example.com";
   return (
     <>
       {/* Shared Navbar */}
@@ -56,17 +60,27 @@ const UserProfile = () => {
 
               {/* User Info */}
 
-              <div className="flex-1 pb-2">
-                <h1 className="text-4xl font-bold text-on-surface">
-                  Alex Johnson
-                </h1>
-
-                <p className="text-on-surface-variant mt-2 max-w-3xl">
-                  Commuter committed to reducing my carbon footprint one shared
-                  ride at a time. Professional software architect and weekend
-                  nature photographer.
-                </p>
-              </div>
+              {/* User Info */}
+                <div className="flex-1 pb-2">
+                  
+                  {/* 1. Changed to text-white and added a drop-shadow for the Name */}
+                  <h1 className="text-4xl font-bold text-white drop-shadow-md tracking-wide">
+                    {displayName} 
+                  </h1>
+                  
+                  {/* 2. Made the Email light gray/white with a drop-shadow */}
+                  <p className="text-gray-100 drop-shadow-md mt-1 max-w-3xl text-lg">
+                    Email : <strong className="text-white">{displayEmail}</strong>
+                  </p>
+                  
+                  {/* 3. Kept the bio text dark because it drops down onto the white background */}
+                  <p className="text-gray-700 mt-4 max-w-3xl leading-relaxed">
+                    Commuter committed to reducing my carbon footprint one shared
+                    ride at a time. Professional software architect and weekend
+                    nature photographer.
+                  </p>
+                  
+                </div>
 
               {/* Edit Button */}
 
