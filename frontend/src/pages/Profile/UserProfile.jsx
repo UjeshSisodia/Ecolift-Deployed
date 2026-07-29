@@ -1,101 +1,129 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-// Shared Components
+import { useEffect, useState } from "react";
+import { AlertCircle } from "lucide-react";
 import Navbar from "../../components/Navbar/Navbar";
-import Sidebar from "../../components/Sidebar/Sidebar";
 import Footer from "../../components/Footer/Footer";
+import ProfileHeader from "../../components/Profile/ProfileHeader";
+import PersonalInfoCard from "../../components/Profile/PersonalInfoCard";
+import EditProfileForm from "../../components/Profile/EditProfileForm";
+import AccountInfoCard from "../../components/Profile/AccountInfoCard";
+import ProfileStats from "../../components/Profile/ProfileStats";
+import AccountSettings from "../../components/Profile/AccountSettings";
+import { getProfile, updateProfile } from "../../api/userApi";
 
+// Acts only as the page container: fetches the profile once, owns the
+// edit/save/cancel state, and hands data + callbacks down to the
+// presentational components in components/Profile/. No rendering logic
+// lives here beyond composing those pieces.
 const UserProfile = () => {
-  const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("passenger");
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
-  const displayName = user?.name || "User";
-  const displayEmail = user?.email || "user@example.com";
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+
+  const fetchProfile = async () => {
+    setLoading(true);
+    setLoadError("");
+    try {
+      const data = await getProfile();
+      setProfile(data);
+    } catch (err) {
+      setLoadError(
+        err?.response?.data?.message ||
+          "Unable to load your profile. Please try again.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const handleSave = async (payload) => {
+    setSaving(true);
+    setSaveError("");
+    try {
+      const updated = await updateProfile(payload);
+      setProfile(updated);
+      setIsEditing(false);
+    } catch (err) {
+      setSaveError(
+        err?.response?.data?.message ||
+          "Failed to save your changes. Please try again.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setSaveError("");
+  };
+
   return (
     <>
-      {/* Shared Navbar */}
       <Navbar />
 
-      <div className="flex min-h-screen bg-background pt-20">
-        {/* Shared Sidebar */}
-        <Sidebar active="profile" />
-        <div className="fixed top-23 left-8 z-50">
-          <Link
-            to="/"
-            className="px-5 py-2.5 bg-white border border-green-700 text-green-700 rounded-full hover:bg-green-50 transition font-medium text-sm shadow-md flex items-center gap-2"
-          >
-            ← Go to Home
-          </Link>
+      <main className="min-h-screen bg-slate-50 pt-20">
+        <div className="bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-500 px-4 py-10 md:px-10">
+          <div className="mx-auto max-w-5xl">
+            <h1 className="text-3xl font-bold text-white">My Profile</h1>
+            <p className="mt-1 text-sm text-emerald-50">
+              View and manage your EcoLift account
+            </p>
+          </div>
         </div>
-        {/* Main Content */}
-        <main className="flex-1 md:ml-72 p-8">
-          {/* ================= HERO SECTION ================= */}
 
-          <section className="mb-10">
-            {/* Cover Image */}
+        <div className="mx-auto max-w-5xl space-y-6 px-4 py-8 md:px-10">
+          {loading && (
+            <p className="text-center text-slate-500 py-10">
+              Loading your profile...
+            </p>
+          )}
 
-            <div className="relative w-full h-48 rounded-[32px] overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
-                alt="Cover"
-                className="w-full h-full object-cover"
-              />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+          {!loading && loadError && (
+            <div className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-4 text-sm font-medium text-red-600">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              {loadError}
             </div>
+          )}
 
-            {/* Profile Header */}
+          {!loading && !loadError && profile && (
+            <>
+              <ProfileHeader profile={profile} />
 
-            <div className="relative flex flex-col md:flex-row items-end gap-6 -mt-16 px-6">
-              {/* Profile Image */}
-
-              <div className="w-32 h-32 rounded-[24px] border-4 border-white overflow-hidden shadow-lg">
-                <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuApEsB5DX28aLUq-XMiqk7ivvgciIvWICwIhCqaxcd6z0xPSKHGaDterKJyVRsQAnWEjFK_Xj3QoH5ZvhE2MMHu2N4CpAcySwZSGYezrbEPIGXzFuHTTGy_1PEBKByYYMnZaCFhlz3fEGp9BsNv4EqWHPmTLaf-6IsRoFvGitGSezTajNVnZuJAt2ghPQp6cl3l2L_u0ivyIEwhfOKgFn-JZaPMM8hYAOxHCd2FrmpHA_Apdp0NI5EBuvvd0EDE6RIvUwJaaBSKxwg"
-                  alt="Alex Johnson"
-                  className="w-full h-full object-cover"
+              {isEditing ? (
+                <EditProfileForm
+                  profile={profile}
+                  onSave={handleSave}
+                  onCancel={handleCancel}
+                  saving={saving}
+                  error={saveError}
                 />
-              </div>
+              ) : (
+                <PersonalInfoCard
+                  profile={profile}
+                  onEditClick={() => setIsEditing(true)}
+                />
+              )}
 
-              {/* User Info */}
+              <AccountInfoCard profile={profile} />
 
-              {/* User Info */}
-                <div className="flex-1 pb-2">
-                  
-                  {/* 1. Changed to text-white and added a drop-shadow for the Name */}
-                  <h1 className="text-4xl font-bold text-white drop-shadow-md tracking-wide">
-                    {displayName} 
-                  </h1>
-                  
-                  {/* 2. Made the Email light gray/white with a drop-shadow */}
-                  <p className="text-gray-100 drop-shadow-md mt-1 max-w-3xl text-lg">
-                    Email : <strong className="text-white">{displayEmail}</strong>
-                  </p>
-                  
-                  {/* 3. Kept the bio text dark because it drops down onto the white background */}
-                  <p className="text-gray-700 mt-4 max-w-3xl leading-relaxed">
-                    Commuter committed to reducing my carbon footprint one shared
-                    ride at a time. Professional software architect and weekend
-                    nature photographer.
-                  </p>
-                  
-                </div>
+              <ProfileStats profile={profile} />
 
-              {/* Edit Button */}
-
-              <div className="pb-2">
-                <button className="bg-primary text-on-primary px-6 py-3 rounded-full hover:shadow-md transition-all flex items-center gap-2">
-                  <span className="material-symbols-outlined">edit</span>
-                  Edit Profile
-                </button>
-              </div>
-            </div>
-          </section>
-        </main>
-      </div>
-
-      {/* Shared Footer */}
+              <AccountSettings
+                profile={profile}
+                onEditClick={() => setIsEditing(true)}
+              />
+            </>
+          )}
+        </div>
+      </main>
 
       <Footer />
     </>
