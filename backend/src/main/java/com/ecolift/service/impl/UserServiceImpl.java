@@ -7,6 +7,7 @@ import com.ecolift.exception.DuplicateResourceException;
 import com.ecolift.repository.UserRepository;
 import com.ecolift.service.RoleService;
 import com.ecolift.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +19,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, RoleService roleService) {
+    public UserServiceImpl(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -37,6 +40,11 @@ public class UserServiceImpl implements UserService {
         user.setName(userDetails.getName());
         user.setPhone(userDetails.getPhone());
         user.setProfilePictureUrl(userDetails.getProfilePictureUrl());
+
+        // Added for the User Profile module (gender/dateOfBirth are new,
+        // optional fields - see User entity).
+        user.setGender(userDetails.getGender());
+        user.setDateOfBirth(userDetails.getDateOfBirth());
         
         return userRepository.save(user);
     }
@@ -165,5 +173,25 @@ public class UserServiceImpl implements UserService {
         if (!hasRole) {
             throw new ResourceNotFoundException("User does not have the required role: " + roleName);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User getProfile(Long userId) {
+        // Thin wrapper over findById - named for this feature so the intent
+        // is clear at the call site in UserController.
+        return findById(userId);
+    }
+
+    @Override
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        User user = findById(userId);
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Current password is incorrect.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

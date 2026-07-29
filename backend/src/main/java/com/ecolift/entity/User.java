@@ -2,6 +2,8 @@ package com.ecolift.entity;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "users")
@@ -48,7 +51,21 @@ public class User {
     private UserMode currentMode = UserMode.PASSENGER;
 
     private String profilePictureUrl;
-    
+
+    // Added for the User Profile module. Nullable since existing accounts
+    // (created before this change) won't have these set.
+    @Column(length = 20)
+    private String gender;
+
+    private LocalDate dateOfBirth;
+
+    // Populated automatically by Hibernate on insert only - existing rows
+    // will show NULL for createdAt/"Member Since" until re-saved, since
+    // there was no created-at tracking before this field was added.
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
     private Boolean isDeleted = false;
     
     @ManyToMany(fetch = FetchType.EAGER)

@@ -21,4 +21,8 @@ public interface UserService {
     User getPassengerProfile(Long passengerId);
     User getCurrentUserMode(String email);
     User updateCurrentMode(String email, com.ecolift.entity.UserMode mode);
+
+    // Added for the User Profile module.
+    User getProfile(Long userId);
+    void changePassword(Long userId, String currentPassword, String newPassword);
 }
