@@ -50,6 +50,9 @@ public class Booking {
 	private LocalDateTime cancellationTime;
 	@OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Payment> payments;
-	public enum BookingStatus{PENDING,CONFIRMED,CANCELLED,REJECTED}
+	// COMPLETED/NO_SHOW added for Booking Management module. No endpoint sets
+	// these yet (not in the requested API surface) - reserved for a future
+	// post-ride reconciliation step (e.g. a scheduled job after departureTime).
+	public enum BookingStatus{PENDING,CONFIRMED,CANCELLED,REJECTED,COMPLETED,NO_SHOW}
 	
 }

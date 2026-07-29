@@ -12,6 +12,8 @@ import Booking from "./pages/Booking/Booking";
 import DriverRides from "./pages/DriverRides/DriverRides";
 import MyVehicles from "./pages/MyVehicles/MyVehicles";
 import Unauthorized from "./pages/Unauthorized/Unauthorized";
+import MyBookings from "./pages/MyBookings/MyBookings";
+import DriverBookings from "./pages/DriverBookings/DriverBookings";
 function App() {
   return (
     <AuthProvider>
@@ -31,12 +33,14 @@ function App() {
           {/* Protected Routes: Any authenticated user */}
           <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<UserProfile />} />
+            <Route path="/bookings/my" element={<MyBookings />} />
           </Route>
 
           {/* Protected Routes: DRIVERS only */}
           <Route element={<ProtectedRoute allowedRoles={["DRIVER"]} />}>
             <Route path="/driver/rides" element={<DriverRides />} />
             <Route path="/driver/vehicles" element={<MyVehicles />} />
+            <Route path="/driver/bookings" element={<DriverBookings />} />
           </Route>
           {/* <Route element={<ProtectedRoute allowedRoles={["DRIVER"]} />}>
             <Route path="/driver-dashboard" element={<DriverDashboard />} />

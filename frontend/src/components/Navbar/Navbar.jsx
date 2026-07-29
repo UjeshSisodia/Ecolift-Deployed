@@ -121,6 +121,12 @@ const Navbar = () => {
                       My Rides
                     </Link>
                     <Link
+                      to="/driver/bookings"
+                      className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50"
+                    >
+                      Booking Requests
+                    </Link>
+                    <Link
                       to="/driver/vehicles"
                       className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50"
                     >
@@ -129,12 +135,12 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    <a
-                      href="#"
+                    <Link
+                      to="/bookings/my"
                       className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50"
                     >
                       My Bookings
-                    </a>
+                    </Link>
                     {!user?.roles?.includes("DRIVER") && (
                       <Link
                         to="/register-vehicle"
@@ -189,6 +195,30 @@ const Navbar = () => {
                         directions_car
                       </span>
                       My Rides
+                    </Link>
+                  )}
+
+                  {currentMode === "DRIVER" ? (
+                    <Link
+                      to="/driver/bookings"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className="px-4 py-2 text-sm text-gray-600 hover:bg-green-50 hover:text-green-700 transition flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        fact_check
+                      </span>
+                      Booking Requests
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/bookings/my"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className="px-4 py-2 text-sm text-gray-600 hover:bg-green-50 hover:text-green-700 transition flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        confirmation_number
+                      </span>
+                      My Bookings
                     </Link>
                   )}
 

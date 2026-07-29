@@ -13,10 +13,20 @@ public interface BookingService {
     long count();
 
     Booking createBooking(Long rideId, Long passengerId, int requestedSeats);
-    void cancelBooking(Long bookingId);
-    void approveBooking(Long bookingId);
-    void rejectBooking(Long bookingId);
+
+    // Added passengerId/driverId params: these actions must only be
+    // performable by the booking's own passenger / the ride's own driver.
+    // No BookingController existed before this change, so nothing external
+    // depended on the old signatures.
+    Booking cancelBooking(Long bookingId, Long passengerId);
+    Booking approveBooking(Long bookingId, Long driverId);
+    Booking rejectBooking(Long bookingId, Long driverId);
+
     List<Booking> getBookingsByPassenger(Long passengerId);
     List<Booking> getBookingsByRide(Long rideId);
     Double calculateTotalFare(Long bookingId);
+
+    // New: driver-facing views across all of a driver's rides.
+    List<Booking> getBookingsForDriver(Long driverId);
+    List<Booking> getPendingBookingsForDriver(Long driverId);
 }
