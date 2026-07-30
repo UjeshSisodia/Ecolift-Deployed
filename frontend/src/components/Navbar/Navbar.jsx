@@ -112,6 +112,14 @@ const Navbar = () => {
               
 
               <div className="hidden md:flex items-center gap-2">
+                {user?.roles?.includes("ADMIN") && (
+                  <Link
+                    to="/admin/dashboard"
+                    className="rounded-full border border-green-200 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50"
+                  >
+                    Admin Panel
+                  </Link>
+                )}
                 {currentMode === "DRIVER" ? (
                   <>
                     <Link
@@ -184,6 +192,19 @@ const Navbar = () => {
                     </span>
                     Profile
                   </Link>
+
+                  {user?.roles?.includes("ADMIN") && (
+                    <Link
+                      to="/admin/dashboard"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className="px-4 py-2 text-sm text-gray-600 hover:bg-green-50 hover:text-green-700 transition flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        admin_panel_settings
+                      </span>
+                      Admin Panel
+                    </Link>
+                  )}
 
                   {currentMode === "DRIVER" && (
                     <Link
