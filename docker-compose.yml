@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+
+  backend:
+    build: ./backend
+    container_name: ecolift-backend
+
+    ports:
+      - "8083:8083"
+
+    restart: always
+
+  frontend:
+    build: ./frontend
+    container_name: ecolift-frontend
+
+    ports:
+      - "80:80"
+
+    restart: always
+
+    depends_on:
+      - backend

@@ -1,3 +1,4 @@
+import vidGif from "../../assets/vid.gif";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, MapPin, CalendarDays, Users } from "lucide-react";
@@ -10,10 +11,7 @@ const Hero = () => {
   return (
     <section
       className="relative min-h-screen bg-cover bg-center flex items-center justify-center"
-      style={{
-        backgroundImage: "url(./src/assets/vid.gif)",
-      }}
-    >
+     style={{ backgroundImage: `url(${vidGif})` }}    >
       <div className="absolute inset-0 bg-black/50"></div>
 
       <div className="relative z-10 w-full max-w-6xl px-6 py-12">
